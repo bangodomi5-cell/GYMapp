@@ -3,65 +3,102 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MambaGYM FINAL v6</title>
+<title>MambaGYM Ultra Pro</title>
 
 <style>
 body{
 margin:0;
 font-family:Arial;
-background:radial-gradient(circle at top,#1b1b2f,#0f0f14);
+background:#0b0c10;
 color:white;
+overflow:hidden;
 }
 
+/* SPLASH */
+#splash{
+position:fixed;
+top:0;left:0;
+width:100%;
+height:100%;
+background:radial-gradient(circle at top,#1f1f3a,#0b0c10);
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+z-index:999;
+}
+
+.logo{
+font-size:28px;
+font-weight:bold;
+letter-spacing:2px;
+animation:pulse 1.5s infinite;
+}
+
+.loader{
+margin-top:20px;
+width:140px;
+height:4px;
+background:#222;
+border-radius:10px;
+overflow:hidden;
+}
+
+.loader div{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#00ff88,#00b3ff);
+animation:load 2.2s forwards;
+}
+
+@keyframes load{
+100%{width:100%;}
+}
+
+/* APP */
+#app{
+display:none;
+height:100vh;
+overflow:auto;
+padding-bottom:80px;
+}
+
+/* HEADER */
 header{
 text-align:center;
 padding:14px;
 font-weight:bold;
-}
-
-.container{
-max-width:500px;
-margin:auto;
-padding:10px;
-padding-bottom:80px;
-}
-
-.page{display:none;}
-.active{display:block;}
-
-.card{
-background:rgba(255,255,255,0.06);
-border-radius:16px;
-padding:12px;
-margin:10px 0;
+background:rgba(255,255,255,0.03);
 backdrop-filter:blur(10px);
 }
 
-input{
-width:100%;
-padding:10px;
-margin-top:6px;
-border-radius:10px;
-border:none;
-background:#222;
-color:white;
+/* CARD */
+.card{
+background:rgba(255,255,255,0.06);
+margin:12px;
+padding:14px;
+border-radius:18px;
+backdrop-filter:blur(12px);
+box-shadow:0 0 20px rgba(0,255,200,0.08);
 }
 
+/* BUTTON */
 button{
 width:100%;
-padding:10px;
+padding:12px;
 margin-top:8px;
 border:none;
-border-radius:10px;
-color:white;
+border-radius:14px;
 font-weight:bold;
+color:white;
 cursor:pointer;
+background:linear-gradient(90deg,#00ff88,#00b3ff);
+transition:0.2s;
 }
 
-.pulse{
-background:linear-gradient(90deg,#00ff88,#00b3ff);
-animation:pulse 1.5s infinite;
-}
+button:active{transform:scale(0.98);}
+
+.pulse{animation:pulse 1.5s infinite;}
 
 @keyframes pulse{
 0%{transform:scale(1);}
@@ -69,8 +106,31 @@ animation:pulse 1.5s infinite;
 100%{transform:scale(1);}
 }
 
-.reset{background:#ff4d4d;}
-.next{background:#ffb703;}
+/* INPUT */
+input{
+width:100%;
+padding:10px;
+margin-top:6px;
+border-radius:12px;
+border:none;
+background:#1a1a1a;
+color:white;
+}
+
+/* BAR */
+.barbg{
+height:10px;
+background:#222;
+border-radius:10px;
+overflow:hidden;
+margin-top:8px;
+}
+
+.bar{
+height:100%;
+width:0%;
+background:linear-gradient(90deg,#00ff88,#00b3ff);
+}
 
 /* NAV */
 .nav{
@@ -78,43 +138,47 @@ position:fixed;
 bottom:0;
 width:100%;
 display:flex;
-background:#111;
-border-top:1px solid #333;
+background:rgba(0,0,0,0.7);
+backdrop-filter:blur(10px);
+border-top:1px solid #222;
 }
 
 .nav button{
 flex:1;
 background:none;
 border:none;
+padding:14px;
 color:white;
-padding:12px;
 }
 
-/* BAR */
-.barbg{height:10px;background:#222;border-radius:10px;overflow:hidden;}
-.bar{height:100%;width:0%;background:linear-gradient(90deg,#00ff88,#00b3ff);}
+/* WORKOUT */
+label{
+display:block;
+margin:6px 0;
+}
 
-/* CHECK */
-label{display:block;margin:6px 0;}
+.page{display:block;}
 
-/* IMG */
-img{width:100%;border-radius:10px;margin-top:8px;}
 </style>
 </head>
 
 <body>
 
-<header>🔥 MAMBA GYM FINAL v6</header>
+<!-- SPLASH -->
+<div id="splash">
+<div class="logo">🔥 MAMBA GYM</div>
+<div class="loader"><div></div></div>
+</div>
 
-<div class="container">
+<!-- APP -->
+<div id="app">
 
-<!-- HOME -->
-<div class="page active" id="home">
+<header>MAMBA GYM ULTRA PRO</header>
 
 <div class="card">
-<h3>🥩 Fehérje 140g</h3>
+<h3>🥩 Fehérje (140g cél)</h3>
 <div id="proteinText">0 / 140g</div>
-<div class="barbg"><div class="bar" id="bar"></div></div>
+<div class="barbg"><div class="bar" id="pbar"></div></div>
 <input id="proteinInput" type="number">
 <button class="pulse" onclick="addProtein()">+ Fehérje</button>
 </div>
@@ -125,79 +189,68 @@ img{width:100%;border-radius:10px;margin-top:8px;}
 </div>
 
 <div class="card">
-<h3 id="wtitle">Mai edzés</h3>
+<h3 id="wtitle">Edzés</h3>
 <div id="workout"></div>
 <div class="barbg"><div class="bar" id="wbar"></div></div>
-<button class="pulse" onclick="saveWorkout();confetti();">Edzés kész</button>
-</div>
-
-</div>
-
-<!-- LOG -->
-<div class="page" id="log">
-<div class="card">
-<h3>🏋️ Súlynapló</h3>
-<input id="ex">
-<input id="w">
-<input id="r">
-<button onclick="saveLog()">Mentés</button>
-<div id="logs"></div>
-</div>
-</div>
-
-<!-- TIMER -->
-<div class="page" id="timer">
-<div class="card">
-<h3>⏱ Timer</h3>
-<div id="time">60</div>
-<button class="pulse" onclick="startTimer()">Start</button>
-<button class="reset" onclick="resetTimer()">Reset</button>
-</div>
-</div>
-
-<!-- PHOTO -->
-<div class="page" id="photo">
-<div class="card">
-<h3>📸 Progress</h3>
-<input type="file" onchange="photo(event)">
-<div id="photos"></div>
-</div>
+<button class="pulse" onclick="saveWorkout()">Edzés kész 💥</button>
 </div>
 
 </div>
 
 <!-- NAV -->
 <div class="nav">
-<button onclick="show('home')">🏠</button>
-<button onclick="show('log')">🏋️</button>
-<button onclick="show('timer')">⏱</button>
-<button onclick="show('photo')">📸</button>
+<button onclick="loadWorkout()">🏠</button>
+<button>🏋️</button>
+<button>⏱</button>
+<button>📸</button>
 </div>
 
 <script>
+
+/* SPLASH */
+setTimeout(()=>{
+document.getElementById("splash").style.display="none";
+document.getElementById("app").style.display="block";
+},2200);
 
 /* DATA */
 let goal=140;
 let protein=parseInt(localStorage.getItem("protein"))||0;
 let streak=parseInt(localStorage.getItem("streak"))||0;
 
-/* 4 DAY SPLIT */
-const plan={
-0:{name:"Hétfő - Mell/Váll/Tricepsz",ex:["Mellnyomó","Ferde nyomó","Pec Deck","Vállnyomó","Oldalemelő","Tricepsz","Tricepsz gép"]},
-1:{name:"Kedd - Hát/Bicepsz",ex:["Lehúzás","Evező","Melltámaszos","Kar lehúzás","Bicepsz","Kalapács"]},
-2:{name:"Csütörtök - Láb",ex:["Lábtoló","Hack squat","Feszítő","Hajlító","Vádli","Has"]},
-3:{name:"Péntek - Felsőtest",ex:["Mellnyomó","Lehúzás","Evező","Váll","Tricepsz","Bicepsz","Has","Plank"]}
-};
+/* PLAN */
+const plan=[
+{
+name:"Hétfő - Mell/Váll/Tricepsz",
+ex:["Mellnyomó","Ferde nyomó","Pec Deck","Vállnyomó","Oldalemelő","Tricepsz"]
+},
+{
+name:"Kedd - Hát/Bicepsz",
+ex:["Lehúzás","Evező","Melltámaszos","Kar lehúzás","Bicepsz"]
+},
+{
+name:"Csütörtök - Láb",
+ex:["Lábtoló","Hack squat","Feszítő","Hajlító","Vádli","Has"]
+},
+{
+name:"Péntek - Felsőtest",
+ex:["Mellnyomó","Lehúzás","Evező","Váll","Tricepsz","Bicepsz","Has"]
+}
+];
 
-let day=new Date().getDay()%4;
+let day=new Date().getDay();
+if(day==3) day=2; 
+if(day>3) day=3;
 
 /* INIT */
-function init(){
-update();
 loadWorkout();
-renderLog();
-renderPhotos();
-checkStreak();
+update();
+
+/* UPDATE */
+function update(){
+document.getElementById("proteinText").innerText=protein+" / 140g";
+document.getElementById("pbar").style.width=Math.min((protein/goal)*100,100)+"%";
+document.getElementById("streak").innerText=streak;
 }
 
 /* PROTEIN */
@@ -207,25 +260,6 @@ if(!v)return;
 protein+=v;
 localStorage.setItem("protein",protein);
 update();
-}
-
-/* UPDATE */
-function update(){
-document.getElementById("proteinText").innerText=protein+" / 140g";
-document.getElementById("bar").style.width=Math.min((protein/goal)*100,100)+"%";
-document.getElementById("streak").innerText=streak;
-}
-
-/* STREAK */
-function checkStreak(){
-let last=localStorage.getItem("last")||"";
-let today=new Date().toDateString();
-
-if(last!==today){
-streak++;
-localStorage.setItem("streak",streak);
-localStorage.setItem("last",today);
-}
 }
 
 /* WORKOUT */
@@ -259,85 +293,6 @@ let done=0;
 boxes.forEach(b=>{if(b.checked)done++;});
 document.getElementById("wbar").style.width=(done/boxes.length)*100+"%";
 }
-
-/* LOG */
-function saveLog(){
-let ex=document.getElementById("ex").value;
-let w=document.getElementById("w").value;
-let r=document.getElementById("r").value;
-
-let l=JSON.parse(localStorage.getItem("log")||"[]");
-l.push({ex,w,r});
-localStorage.setItem("log",JSON.stringify(l));
-renderLog();
-}
-
-function renderLog(){
-let l=JSON.parse(localStorage.getItem("log")||"[]");
-document.getElementById("logs").innerHTML=
-l.map(x=>`<div class="card">${x.ex} ${x.w}kg x ${x.r}</div>`).join("");
-}
-
-/* PHOTO */
-function photo(e){
-let f=e.target.files[0];
-let r=new FileReader();
-r.onload=function(){
-let p=JSON.parse(localStorage.getItem("p")||"[]");
-p.push(r.result);
-localStorage.setItem("p",JSON.stringify(p));
-renderPhotos();
-}
-r.readAsDataURL(f);
-}
-
-function renderPhotos(){
-let p=JSON.parse(localStorage.getItem("p")||"[]");
-document.getElementById("photos").innerHTML=
-p.map(x=>`<img src="${x}">`).join("");
-}
-
-/* TIMER */
-let time=60;
-let t;
-function startTimer(){
-clearInterval(t);
-t=setInterval(()=>{
-time--;
-document.getElementById("time").innerText=time;
-if(time<=0){clearInterval(t);alert("🔥 GO!");}
-},1000);
-}
-function resetTimer(){
-time=60;
-document.getElementById("time").innerText=time;
-}
-
-/* CONFETTI */
-function confetti(){
-for(let i=0;i<20;i++){
-let d=document.createElement("div");
-d.style.position="fixed";
-d.style.left=Math.random()*100+"%";
-d.style.top="0px";
-d.style.width="5px";
-d.style.height="5px";
-d.style.background=["#00ff88","#00b3ff","#ffb703"][i%3];
-document.body.appendChild(d);
-let t=setInterval(()=>{
-d.style.top=(parseInt(d.style.top||0)+5)+"px";
-if(parseInt(d.style.top)>window.innerHeight){d.remove();clearInterval(t);}
-},20);
-}
-}
-
-/* NAV */
-function show(id){
-document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-document.getElementById(id).classList.add("active");
-}
-
-init();
 
 </script>
 
