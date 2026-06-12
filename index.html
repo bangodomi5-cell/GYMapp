@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0f0f14">
+
+<title>MambaGYM</title>
+
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<header>
+  <h1>🔥 MambaGYM</h1>
+  <p>Edzés + Fehérje tracker</p>
+</header>
+
+<div class="container">
+
+  <!-- FEHÉRJE -->
+  <div class="card">
+    <h2>🥩 Fehérje cél: 140g</h2>
+
+    <p id="proteinText">0 / 140g</p>
+
+    <div class="progress">
+      <div id="bar"></div>
+    </div>
+
+    <input id="proteinInput" type="number" placeholder="bevitt gramm">
+    <button onclick="addProtein()">Hozzáadás</button>
+    <button class="reset" onclick="resetProtein()">Reset</button>
+  </div>
+
+  <!-- EDZÉS -->
+  <div class="card">
+    <h2>🏋️ Edzés</h2>
+
+    <label><input type="checkbox" class="w"> Mellnyomó</label><br>
+    <label><input type="checkbox" class="w"> Ferde nyomó</label><br>
+    <label><input type="checkbox" class="w"> Vállnyomó</label><br>
+    <label><input type="checkbox" class="w"> Tricepsz letolás</label><br>
+
+    <button onclick="saveWorkout()">Mentés</button>
+    <button class="reset" onclick="resetWorkout()">Reset edzés</button>
+  </div>
+
+  <!-- RESET -->
+  <div class="card">
+    <h2>⚠️ Veszély zóna</h2>
+    <button class="reset" onclick="fullReset()">Minden törlése</button>
+  </div>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
