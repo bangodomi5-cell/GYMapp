@@ -3,77 +3,39 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>N30NH4T Studio GYM OS</title>
+<title>GYM OS FIRE FIX</title>
 
 <style>
-:root{
---bg:#0a0a0a;
---card:#141414;
---accent:#00ff88;
---red:#ff3b3b;
---gold:#ffd700;
---muted:#9aa0a6;
-}
-
 body{
 margin:0;
 font-family:Arial;
-background:var(--bg);
+background:black;
 color:white;
+overflow:auto;
 }
 
-/* SPLASH */
-#splash{
+/* 🔥 FIRE BACKGROUND */
+#fire{
 position:fixed;
 inset:0;
-background:black;
-display:flex;
-flex-direction:column;
-align-items:center;
-justify-content:center;
-z-index:999;
-text-align:center;
-}
-
-.logo{
-font-size:26px;
-font-weight:800;
-animation:pulse 1.5s infinite;
-}
-
-.sub{color:#888;font-size:12px;margin-top:8px;}
-
-@keyframes pulse{
-0%{transform:scale(1)}
-50%{transform:scale(1.05)}
-100%{transform:scale(1)}
+z-index:-2;
+pointer-events:none;
 }
 
 /* APP */
 #app{
 display:none;
+position:relative;
+z-index:2;
 padding:16px;
-padding-bottom:120px;
-}
-
-/* HEADER */
-.header{
-display:flex;
-justify-content:space-between;
-align-items:center;
-margin-bottom:10px;
-}
-
-.streak{
-color:var(--accent);
-font-weight:bold;
+padding-bottom:140px;
 }
 
 /* CARD */
 .card{
-background:var(--card);
-border-radius:18px;
+background:#141414;
 padding:16px;
+border-radius:16px;
 margin-bottom:12px;
 }
 
@@ -84,30 +46,31 @@ padding:12px;
 margin-top:8px;
 border:none;
 border-radius:14px;
-background:var(--accent);
+background:#00ff88;
 color:black;
 font-weight:700;
 cursor:pointer;
-transition:.2s;
-}
-
-button:hover{
-transform:scale(1.03);
-}
-
-button:active{
-transform:scale(0.97);
 }
 
 button:disabled{
 background:#333;
 color:#777;
-cursor:not-allowed;
 }
 
-button.danger{
-background:var(--red);
-color:white;
+/* BAR */
+.bar{
+width:100%;
+height:12px;
+background:#222;
+border-radius:10px;
+overflow:hidden;
+}
+
+.fill{
+height:100%;
+width:0%;
+transition:.5s;
+background:linear-gradient(90deg,#00ff88,#00b3ff);
 }
 
 /* INPUT */
@@ -115,336 +78,172 @@ input{
 width:100%;
 padding:10px;
 margin-top:6px;
-border-radius:12px;
+border-radius:10px;
 border:none;
 background:#1a1a1a;
 color:white;
 }
 
-/* WORKOUT */
-.workout{
-background:#101010;
-border-radius:16px;
-padding:14px;
-margin-bottom:10px;
-}
-
-/* CALENDAR */
-.calendar{
-display:grid;
-grid-template-columns:repeat(7,1fr);
-gap:6px;
-}
-
-.daybox{
-background:#1a1a1a;
+/* RESET */
+#resetBar{
+position:fixed;
+bottom:0;
+width:100%;
 padding:10px;
-border-radius:10px;
-text-align:center;
-font-size:12px;
-color:#aaa;
-}
-
-.daybox.done{
-background:var(--red);
-color:white;
-font-weight:bold;
-}
-
-.daybox.today{
-border:1px solid var(--accent);
-}
-
-/* MODAL */
-#modal{
-display:none;
-position:fixed;
-inset:0;
-background:rgba(0,0,0,0.85);
-z-index:999;
-padding:20px;
-}
-
-.modal-box{
-background:#141414;
-padding:16px;
-border-radius:16px;
-max-width:600px;
-margin:auto;
-overflow:auto;
-max-height:90vh;
-}
-
-.win{
-display:none;
-position:fixed;
-inset:0;
 background:rgba(0,0,0,0.9);
-z-index:9999;
-align-items:center;
-justify-content:center;
-flex-direction:column;
-text-align:center;
+z-index:10;
 }
 
-.win h1{
-color:var(--gold);
-font-size:26px;
+#resetBar button{
+background:#ff3b3b;
+color:white;
 }
-
-.win p{
-color:var(--red);
-}
-
 </style>
 </head>
 
 <body>
 
-<!-- SPLASH -->
-<div id="splash">
-<div class="logo">N30NH4T Studio (GYM)</div>
-<div class="sub">created by N30NH4T</div>
-</div>
-
-<!-- WIN -->
-<div id="win" class="win">
-<h1>HÉT SIKERESEN TELJESÍTVE</h1>
-<p>reseteld a teljes hetet</p>
-</div>
+<!-- 🔥 FIRE -->
+<canvas id="fire"></canvas>
 
 <div id="app">
 
-<div class="header">
-<div>GYM OS</div>
-<div class="streak">🔥 <span id="streak">0</span></div>
-</div>
-
-<!-- XP -->
 <div class="card">
-XP: <span id="xp">0</span> / 1000
+<h3>⚡ XP</h3>
+<div class="bar"><div id="xpFill" class="fill"></div></div>
+<div><span id="xpText">0</span> / 1000</div>
 </div>
 
-<!-- PROTEIN -->
+<div class="card">
+<h3>🏆 Szint</h3>
+<div class="bar"><div id="levelFill" class="fill"></div></div>
+<div><span id="levelText">1</span> / 5</div>
+</div>
+
 <div class="card">
 <h3>🥩 Protein</h3>
-<div id="proteinText"></div>
-<input id="proteinInput">
+<input id="proteinInput" type="number" placeholder="gramm">
 <button onclick="addProtein()">+ Protein</button>
-<button class="danger" onclick="resetProtein()">Reset</button>
+<div class="bar"><div id="proteinFill" class="fill"></div></div>
+<div><span id="proteinText">0</span> / 140g</div>
 </div>
 
-<!-- CREATINE -->
 <div class="card">
 <h3>💊 Kreatin</h3>
-<div id="creatineText"></div>
-<button onclick="addCreatine()">+1g</button>
-<button class="danger" onclick="resetCreatine()">Reset</button>
+<input id="creatineInput" type="number" placeholder="gramm">
+<button onclick="addCreatine()">+ Kreatin</button>
+<div class="bar"><div id="creatineFill" class="fill"></div></div>
+<div><span id="creatineText">0</span> / 5g</div>
 </div>
 
-<!-- CALENDAR -->
-<div class="card">
-<h3>📅 Naptár</h3>
-<div id="calendar"></div>
-<button onclick="openWeek()">📊 Teljes hét megtekintése</button>
-</div>
-
-<!-- WORKOUTS -->
 <div id="workouts"></div>
 
-<button class="danger" onclick="resetAll()">RESET MINDEN</button>
-
 </div>
 
-<!-- MODAL -->
-<div id="modal">
-<div class="modal-box">
-<h2 id="mTitle"></h2>
-<div id="mText"></div>
-<button onclick="closeModal()">Bezárás</button>
-</div>
+<!-- RESET -->
+<div id="resetBar">
+<button onclick="resetAll()">RESET MINDEN</button>
 </div>
 
 <script>
 
-/* SPLASH */
+/* SHOW APP */
 setTimeout(()=>{
-document.getElementById("splash").style.display="none";
 document.getElementById("app").style.display="block";
-},1500);
+},800);
 
 /* DATA */
-let xp=parseInt(localStorage.getItem("xp"))||0;
-let protein=parseInt(localStorage.getItem("protein"))||0;
-let creatine=parseInt(localStorage.getItem("creatine"))||0;
-let streak=parseInt(localStorage.getItem("streak"))||0;
+let xp=+localStorage.getItem("xp")||0;
+let protein=+localStorage.getItem("protein")||0;
+let creatine=+localStorage.getItem("creatine")||0;
 let finished=JSON.parse(localStorage.getItem("finished")||"{}");
 
-const XP_TARGET=1000;
-
-/* WEEK */
-const plan=[
-{
-name:"Hétfő – Push",
-xp:250,
-detail:`Mellnyomó 4×8–12<br>Ferde 3×8–12<br>Pec Deck 3×12–15<br>Vállnyomó 3×8–12<br>Tricepsz`
-},
-{
-name:"Kedd – Pull",
-xp:250,
-detail:`Lehúzás 4×8–12<br>Evező 4×8–12<br>Bicepsz`
-},
-{
-name:"Csütörtök – Láb",
-xp:250,
-detail:`Lábtoló 4×10–15<br>Hack squat 3×8–12<br>Combhajlító`
-},
-{
-name:"Péntek – Full",
-xp:250,
-detail:`Mell, hát, váll, kar`
-}
+/* PLAN */
+const PLAN=[
+{name:"Hétfő – Push",xp:250},
+{name:"Kedd – Pull",xp:250},
+{name:"Csütörtök – Láb",xp:250},
+{name:"Péntek – Full",xp:250}
 ];
 
+/* INIT */
 render();
-renderCalendar();
-checkWin();
+update();
+
+/* LEVEL */
+function level(){
+return Math.min(Math.floor(xp/200)+1,5);
+}
 
 /* RENDER */
 function render(){
+let html="";
 
-document.getElementById("xp").innerText=xp;
-document.getElementById("streak").innerText=streak;
-
-document.getElementById("proteinText").innerText=protein+"/140g";
-document.getElementById("creatineText").innerText=creatine+"/5g";
-
-let out="";
-
-plan.forEach((p,i)=>{
-let done=finished[i];
-
-out+=`
-<div class="workout">
+PLAN.forEach((p,i)=>{
+html+=`
+<div class="card">
 <h3>${p.name}</h3>
-
-<button onclick="openModal(${i})">Feladat megnyitása</button>
-
-<button onclick="finish(${i})" ${done?'disabled':''}>
+<button onclick="finish(${i})" ${finished[i]?"disabled":""}>
 Nap lezárása (+${p.xp} XP)
 </button>
 </div>
 `;
 });
 
-document.getElementById("workouts").innerHTML=out;
+document.getElementById("workouts").innerHTML=html;
 }
 
 /* FINISH */
 function finish(i){
+if(finished[i])return;
 
-if(!finished[i]){
 finished[i]=true;
-xp+=plan[i].xp;
-streak++;
+xp+=PLAN[i].xp;
 
-localStorage.setItem("finished",JSON.stringify(finished));
 localStorage.setItem("xp",xp);
-localStorage.setItem("streak",streak);
-}
+localStorage.setItem("finished",JSON.stringify(finished));
 
 render();
-renderCalendar();
-checkWin();
-}
-
-/* WIN */
-function checkWin(){
-
-let all=Object.keys(finished).length===plan.length;
-
-if(all && xp>=XP_TARGET){
-document.getElementById("win").style.display="flex";
-
-setTimeout(()=>{
-document.getElementById("win").style.display="none";
-},5000);
-}
+update();
 }
 
 /* PROTEIN */
 function addProtein(){
-let v=parseInt(document.getElementById("proteinInput").value);
+let v=+document.getElementById("proteinInput").value;
 if(!v)return;
+
 protein+=v;
 localStorage.setItem("protein",protein);
-render();
+update();
 }
 
-function resetProtein(){
-protein=0;
-localStorage.setItem("protein",0);
-render();
-}
-
-/* CREATINE */
+/* KREATIN */
 function addCreatine(){
-if(creatine<5){
-creatine++;
+let v=+document.getElementById("creatineInput").value;
+if(!v)return;
+
+if(creatine+v>5) return alert("Max 5g!");
+
+creatine+=v;
 localStorage.setItem("creatine",creatine);
-render();
-}
-}
-
-function resetCreatine(){
-creatine=0;
-localStorage.setItem("creatine",0);
-render();
+update();
 }
 
-/* CALENDAR */
-function renderCalendar(){
-let cal=document.getElementById("calendar");
-let t=new Date();
-let y=t.getFullYear();
-let m=t.getMonth();
+/* UPDATE */
+function update(){
 
-let first=new Date(y,m,1).getDay();
-let days=new Date(y,m+1,0).getDate();
+document.getElementById("xpText").innerText=xp;
+document.getElementById("xpFill").style.width=Math.min(xp/10,100)+"%";
 
-let html='<div class="calendar">';
+let lv=level();
+document.getElementById("levelText").innerText=lv;
+document.getElementById("levelFill").style.width=(lv/5)*100+"%";
 
-for(let i=0;i<first;i++) html+="<div></div>";
+document.getElementById("proteinText").innerText=protein;
+document.getElementById("proteinFill").style.width=(protein/140)*100+"%";
 
-for(let d=1;d<=days;d++){
-let key=y+"-"+m+"-"+d;
-let done=finished[d%plan.length===0?3:d%plan.length];
-
-html+=`
-<div class="daybox ${done?'done':''}">
-${d}
-</div>
-`;
-}
-
-html+='</div>';
-cal.innerHTML=html;
-}
-
-/* MODAL */
-function openModal(i){
-document.getElementById("mTitle").innerText=plan[i].name;
-document.getElementById("mText").innerHTML=plan[i].detail;
-document.getElementById("modal").style.display="block";
-}
-
-function closeModal(){
-document.getElementById("modal").style.display="none";
-}
-
-/* WEEK MODAL */
-function openWeek(){
-alert("Teljes heti edzésterv megnyitva ✔");
+document.getElementById("creatineText").innerText=creatine;
+document.getElementById("creatineFill").style.width=(creatine/5)*100+"%";
 }
 
 /* RESET */
@@ -452,6 +251,50 @@ function resetAll(){
 localStorage.clear();
 location.reload();
 }
+
+/* 🔥 FIRE FIXED */
+const canvas=document.getElementById("fire");
+const ctx=canvas.getContext("2d");
+
+function resize(){
+canvas.width=window.innerWidth;
+canvas.height=window.innerHeight;
+}
+resize();
+window.addEventListener("resize",resize);
+
+let particles=[];
+
+function P(){
+this.x=Math.random()*canvas.width;
+this.y=canvas.height;
+this.s=Math.random()*6+2;
+this.sp=Math.random()*3+1;
+this.c=`rgba(255,${Math.random()*150},0,0.8)`;
+}
+
+function loop(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+
+particles.forEach((p,i)=>{
+p.y-=p.sp;
+p.x+=Math.sin(p.y*0.01)*2;
+p.s*=0.99;
+
+ctx.beginPath();
+ctx.fillStyle=p.c;
+ctx.arc(p.x,p.y,p.s,0,Math.PI*2);
+ctx.fill();
+
+if(p.y<0)particles.splice(i,1);
+});
+
+for(let i=0;i<3;i++)particles.push(new P());
+
+requestAnimationFrame(loop);
+}
+
+loop();
 
 </script>
 
