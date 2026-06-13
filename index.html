@@ -51,19 +51,15 @@ background:linear-gradient(90deg,#00ff88,#00b3ff);
 animation:load 2.2s forwards;
 }
 
-@keyframes load{
-100%{width:100%;}
-}
+@keyframes load{100%{width:100%;}}
 
-/* APP */
 #app{
 display:none;
 height:100vh;
 overflow:auto;
-padding-bottom:80px;
+padding-bottom:100px;
 }
 
-/* HEADER */
 header{
 text-align:center;
 padding:14px;
@@ -72,7 +68,6 @@ background:rgba(255,255,255,0.03);
 backdrop-filter:blur(10px);
 }
 
-/* CARD */
 .card{
 background:rgba(255,255,255,0.06);
 margin:12px;
@@ -80,9 +75,14 @@ padding:14px;
 border-radius:18px;
 backdrop-filter:blur(12px);
 box-shadow:0 0 20px rgba(0,255,200,0.08);
+animation:fade .3s ease;
 }
 
-/* BUTTON */
+@keyframes fade{
+from{opacity:0;transform:scale(.97)}
+to{opacity:1;transform:scale(1)}
+}
+
 button{
 width:100%;
 padding:12px;
@@ -98,15 +98,6 @@ transition:0.2s;
 
 button:active{transform:scale(0.98);}
 
-.pulse{animation:pulse 1.5s infinite;}
-
-@keyframes pulse{
-0%{transform:scale(1);}
-50%{transform:scale(1.03);}
-100%{transform:scale(1);}
-}
-
-/* INPUT */
 input{
 width:100%;
 padding:10px;
@@ -117,7 +108,6 @@ background:#1a1a1a;
 color:white;
 }
 
-/* BAR */
 .barbg{
 height:10px;
 background:#222;
@@ -132,7 +122,6 @@ width:0%;
 background:linear-gradient(90deg,#00ff88,#00b3ff);
 }
 
-/* NAV */
 .nav{
 position:fixed;
 bottom:0;
@@ -151,13 +140,10 @@ padding:14px;
 color:white;
 }
 
-/* WORKOUT */
-label{
-display:block;
-margin:6px 0;
+.done{
+opacity:0.5;
+text-decoration:line-through;
 }
-
-.page{display:block;}
 
 </style>
 </head>
@@ -170,29 +156,49 @@ margin:6px 0;
 <div class="loader"><div></div></div>
 </div>
 
-<!-- APP -->
 <div id="app">
 
 <header>MAMBA GYM ULTRA PRO</header>
 
+<!-- PROTEIN -->
 <div class="card">
-<h3>🥩 Fehérje (140g cél)</h3>
+<h3>🥩 Fehérje</h3>
 <div id="proteinText">0 / 140g</div>
-<div class="barbg"><div class="bar" id="pbar"></div></div>
 <input id="proteinInput" type="number">
-<button class="pulse" onclick="addProtein()">+ Fehérje</button>
+<button onclick="addProtein()">+ Fehérje</button>
+<div class="barbg"><div class="bar" id="pbar"></div></div>
 </div>
 
+<!-- STREAK -->
 <div class="card">
 <h3>🔥 Streak</h3>
 <div id="streak">0</div>
+<button onclick="finishDay()">VÉGZÉS</button>
+<button style="background:red" onclick="resetAll()">RESET MINDEN</button>
 </div>
 
+<!-- RUN -->
+<div class="card">
+<h3>🏃 Futás napló</h3>
+<input id="runTime" placeholder="Idő (perc)">
+<input id="runKm" placeholder="Km">
+<input id="runCal" placeholder="Kalória">
+<button onclick="addRun()">Hozzáadás</button>
+<div id="runList"></div>
+</div>
+
+<!-- WORKOUT -->
 <div class="card">
 <h3 id="wtitle">Edzés</h3>
 <div id="workout"></div>
 <div class="barbg"><div class="bar" id="wbar"></div></div>
-<button class="pulse" onclick="saveWorkout()">Edzés kész 💥</button>
+</div>
+
+<!-- IMAGE -->
+<div class="card">
+<h3>📸 Kép feltöltés</h3>
+<input type="file" accept="image/*" onchange="loadImage(event)">
+<img id="preview" style="display:none; margin-top:10px; border-radius:12px; max-width:100%;">
 </div>
 
 </div>
@@ -207,42 +213,27 @@ margin:6px 0;
 
 <script>
 
-/* SPLASH */
 setTimeout(()=>{
 document.getElementById("splash").style.display="none";
 document.getElementById("app").style.display="block";
 },2200);
 
-/* DATA */
 let goal=140;
 let protein=parseInt(localStorage.getItem("protein"))||0;
 let streak=parseInt(localStorage.getItem("streak"))||0;
+let finished=false;
 
-/* PLAN */
 const plan=[
-{
-name:"Hétfő - Mell/Váll/Tricepsz",
-ex:["Mellnyomó","Ferde nyomó","Pec Deck","Vállnyomó","Oldalemelő","Tricepsz"]
-},
-{
-name:"Kedd - Hát/Bicepsz",
-ex:["Lehúzás","Evező","Melltámaszos","Kar lehúzás","Bicepsz"]
-},
-{
-name:"Csütörtök - Láb",
-ex:["Lábtoló","Hack squat","Feszítő","Hajlító","Vádli","Has"]
-},
-{
-name:"Péntek - Felsőtest",
-ex:["Mellnyomó","Lehúzás","Evező","Váll","Tricepsz","Bicepsz","Has"]
-}
+{name:"Hétfő",ex:["Mell","Váll","Tricepsz"]},
+{name:"Kedd",ex:["Hát","Bicepsz"]},
+{name:"Csütörtök",ex:["Láb"]},
+{name:"Péntek",ex:["Full Upper"]}
 ];
 
 let day=new Date().getDay();
-if(day==3) day=2; 
+if(day==3) day=2;
 if(day>3) day=3;
 
-/* INIT */
 loadWorkout();
 update();
 
@@ -251,6 +242,8 @@ function update(){
 document.getElementById("proteinText").innerText=protein+" / 140g";
 document.getElementById("pbar").style.width=Math.min((protein/goal)*100,100)+"%";
 document.getElementById("streak").innerText=streak;
+
+renderRuns();
 }
 
 /* PROTEIN */
@@ -271,8 +264,9 @@ let saved=JSON.parse(localStorage.getItem("w_"+day)||"[]");
 
 document.getElementById("workout").innerHTML=
 p.ex.map((e,i)=>`
-<label>
-<input type="checkbox" onchange="saveWorkout();updateBar()" ${saved[i]?"checked":""}>
+<label class="${finished?'done':''}">
+<input type="checkbox" ${saved[i]?"checked":""} ${finished?"disabled":""}
+onchange="saveWorkout();updateBar();">
 ${e}
 </label>
 `).join("");
@@ -292,6 +286,71 @@ let boxes=document.querySelectorAll("#workout input");
 let done=0;
 boxes.forEach(b=>{if(b.checked)done++;});
 document.getElementById("wbar").style.width=(done/boxes.length)*100+"%";
+}
+
+/* FINISH DAY */
+function finishDay(){
+finished=true;
+if(doneAll()){
+streak++;
+}
+localStorage.setItem("streak",streak);
+update();
+loadWorkout();
+}
+
+function doneAll(){
+let boxes=document.querySelectorAll("#workout input");
+return [...boxes].every(b=>b.checked);
+}
+
+/* RESET */
+function resetAll(){
+localStorage.clear();
+location.reload();
+}
+
+/* RUN */
+function addRun(){
+let t=document.getElementById("runTime").value;
+let k=document.getElementById("runKm").value;
+let c=document.getElementById("runCal").value;
+
+let data=JSON.parse(localStorage.getItem("runs")||"[]");
+data.push({t,k,c});
+localStorage.setItem("runs",JSON.stringify(data));
+
+update();
+}
+
+function renderRuns(){
+let data=JSON.parse(localStorage.getItem("runs")||"[]");
+document.getElementById("runList").innerHTML=
+data.map(r=>`🏃 ${r.t} perc - ${r.k} km - ${r.c} kcal`).join("<br>");
+}
+
+/* IMAGE */
+function loadImage(e){
+let file=e.target.files[0];
+let reader=new FileReader();
+
+reader.onload=function(){
+let img=document.getElementById("preview");
+img.src=reader.result;
+img.style.display="block";
+
+localStorage.setItem("img",reader.result);
+}
+
+reader.readAsDataURL(file);
+}
+
+/* LOAD IMAGE */
+let savedImg=localStorage.getItem("img");
+if(savedImg){
+let img=document.getElementById("preview");
+img.src=savedImg;
+img.style.display="block";
 }
 
 </script>
