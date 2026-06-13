@@ -3,101 +3,114 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>MambaGYM Ultra Pro</title>
+<title>N30NH4T Studio GYM OS</title>
 
 <style>
+:root{
+--bg:#0a0a0a;
+--card:#141414;
+--accent:#00ff88;
+--red:#ff3b3b;
+--gold:#ffd700;
+--muted:#9aa0a6;
+}
+
 body{
 margin:0;
 font-family:Arial;
-background:#0b0c10;
+background:var(--bg);
 color:white;
-overflow:hidden;
 }
 
 /* SPLASH */
 #splash{
 position:fixed;
-top:0;left:0;
-width:100%;
-height:100%;
-background:radial-gradient(circle at top,#1f1f3a,#0b0c10);
+inset:0;
+background:black;
 display:flex;
 flex-direction:column;
 align-items:center;
 justify-content:center;
 z-index:999;
+text-align:center;
 }
 
 .logo{
-font-size:28px;
-font-weight:bold;
-letter-spacing:2px;
+font-size:26px;
+font-weight:800;
 animation:pulse 1.5s infinite;
 }
 
-.loader{
-margin-top:20px;
-width:140px;
-height:4px;
-background:#222;
-border-radius:10px;
-overflow:hidden;
+.sub{color:#888;font-size:12px;margin-top:8px;}
+
+@keyframes pulse{
+0%{transform:scale(1)}
+50%{transform:scale(1.05)}
+100%{transform:scale(1)}
 }
 
-.loader div{
-height:100%;
-width:0%;
-background:linear-gradient(90deg,#00ff88,#00b3ff);
-animation:load 2.2s forwards;
-}
-
-@keyframes load{100%{width:100%;}}
-
+/* APP */
 #app{
 display:none;
-height:100vh;
-overflow:auto;
-padding-bottom:100px;
+padding:16px;
+padding-bottom:120px;
 }
 
-header{
-text-align:center;
-padding:14px;
+/* HEADER */
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:10px;
+}
+
+.streak{
+color:var(--accent);
 font-weight:bold;
-background:rgba(255,255,255,0.03);
-backdrop-filter:blur(10px);
 }
 
+/* CARD */
 .card{
-background:rgba(255,255,255,0.06);
-margin:12px;
-padding:14px;
+background:var(--card);
 border-radius:18px;
-backdrop-filter:blur(12px);
-box-shadow:0 0 20px rgba(0,255,200,0.08);
-animation:fade .3s ease;
+padding:16px;
+margin-bottom:12px;
 }
 
-@keyframes fade{
-from{opacity:0;transform:scale(.97)}
-to{opacity:1;transform:scale(1)}
-}
-
+/* BUTTON */
 button{
 width:100%;
 padding:12px;
 margin-top:8px;
 border:none;
 border-radius:14px;
-font-weight:bold;
-color:white;
+background:var(--accent);
+color:black;
+font-weight:700;
 cursor:pointer;
-background:linear-gradient(90deg,#00ff88,#00b3ff);
-transition:0.2s;
+transition:.2s;
 }
 
-button:active{transform:scale(0.98);}
+button:hover{
+transform:scale(1.03);
+}
 
+button:active{
+transform:scale(0.97);
+}
+
+button:disabled{
+background:#333;
+color:#777;
+cursor:not-allowed;
+}
+
+button.danger{
+background:var(--red);
+color:white;
+}
+
+/* INPUT */
 input{
 width:100%;
 padding:10px;
@@ -108,41 +121,79 @@ background:#1a1a1a;
 color:white;
 }
 
-.barbg{
-height:10px;
-background:#222;
-border-radius:10px;
-overflow:hidden;
-margin-top:8px;
-}
-
-.bar{
-height:100%;
-width:0%;
-background:linear-gradient(90deg,#00ff88,#00b3ff);
-}
-
-.nav{
-position:fixed;
-bottom:0;
-width:100%;
-display:flex;
-background:rgba(0,0,0,0.7);
-backdrop-filter:blur(10px);
-border-top:1px solid #222;
-}
-
-.nav button{
-flex:1;
-background:none;
-border:none;
+/* WORKOUT */
+.workout{
+background:#101010;
+border-radius:16px;
 padding:14px;
-color:white;
+margin-bottom:10px;
 }
 
-.done{
-opacity:0.5;
-text-decoration:line-through;
+/* CALENDAR */
+.calendar{
+display:grid;
+grid-template-columns:repeat(7,1fr);
+gap:6px;
+}
+
+.daybox{
+background:#1a1a1a;
+padding:10px;
+border-radius:10px;
+text-align:center;
+font-size:12px;
+color:#aaa;
+}
+
+.daybox.done{
+background:var(--red);
+color:white;
+font-weight:bold;
+}
+
+.daybox.today{
+border:1px solid var(--accent);
+}
+
+/* MODAL */
+#modal{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.85);
+z-index:999;
+padding:20px;
+}
+
+.modal-box{
+background:#141414;
+padding:16px;
+border-radius:16px;
+max-width:600px;
+margin:auto;
+overflow:auto;
+max-height:90vh;
+}
+
+.win{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.9);
+z-index:9999;
+align-items:center;
+justify-content:center;
+flex-direction:column;
+text-align:center;
+}
+
+.win h1{
+color:var(--gold);
+font-size:26px;
+}
+
+.win p{
+color:var(--red);
 }
 
 </style>
@@ -152,98 +203,173 @@ text-decoration:line-through;
 
 <!-- SPLASH -->
 <div id="splash">
-<div class="logo">🔥 MAMBA GYM</div>
-<div class="loader"><div></div></div>
+<div class="logo">N30NH4T Studio (GYM)</div>
+<div class="sub">created by N30NH4T</div>
+</div>
+
+<!-- WIN -->
+<div id="win" class="win">
+<h1>HÉT SIKERESEN TELJESÍTVE</h1>
+<p>reseteld a teljes hetet</p>
 </div>
 
 <div id="app">
 
-<header>MAMBA GYM ULTRA PRO</header>
+<div class="header">
+<div>GYM OS</div>
+<div class="streak">🔥 <span id="streak">0</span></div>
+</div>
+
+<!-- XP -->
+<div class="card">
+XP: <span id="xp">0</span> / 1000
+</div>
 
 <!-- PROTEIN -->
 <div class="card">
-<h3>🥩 Fehérje</h3>
-<div id="proteinText">0 / 140g</div>
-<input id="proteinInput" type="number">
-<button onclick="addProtein()">+ Fehérje</button>
-<div class="barbg"><div class="bar" id="pbar"></div></div>
+<h3>🥩 Protein</h3>
+<div id="proteinText"></div>
+<input id="proteinInput">
+<button onclick="addProtein()">+ Protein</button>
+<button class="danger" onclick="resetProtein()">Reset</button>
 </div>
 
-<!-- STREAK -->
+<!-- CREATINE -->
 <div class="card">
-<h3>🔥 Streak</h3>
-<div id="streak">0</div>
-<button onclick="finishDay()">VÉGZÉS</button>
-<button style="background:red" onclick="resetAll()">RESET MINDEN</button>
+<h3>💊 Kreatin</h3>
+<div id="creatineText"></div>
+<button onclick="addCreatine()">+1g</button>
+<button class="danger" onclick="resetCreatine()">Reset</button>
 </div>
 
-<!-- RUN -->
+<!-- CALENDAR -->
 <div class="card">
-<h3>🏃 Futás napló</h3>
-<input id="runTime" placeholder="Idő (perc)">
-<input id="runKm" placeholder="Km">
-<input id="runCal" placeholder="Kalória">
-<button onclick="addRun()">Hozzáadás</button>
-<div id="runList"></div>
+<h3>📅 Naptár</h3>
+<div id="calendar"></div>
+<button onclick="openWeek()">📊 Teljes hét megtekintése</button>
 </div>
 
-<!-- WORKOUT -->
-<div class="card">
-<h3 id="wtitle">Edzés</h3>
-<div id="workout"></div>
-<div class="barbg"><div class="bar" id="wbar"></div></div>
-</div>
+<!-- WORKOUTS -->
+<div id="workouts"></div>
 
-<!-- IMAGE -->
-<div class="card">
-<h3>📸 Kép feltöltés</h3>
-<input type="file" accept="image/*" onchange="loadImage(event)">
-<img id="preview" style="display:none; margin-top:10px; border-radius:12px; max-width:100%;">
-</div>
+<button class="danger" onclick="resetAll()">RESET MINDEN</button>
 
 </div>
 
-<!-- NAV -->
-<div class="nav">
-<button onclick="loadWorkout()">🏠</button>
-<button>🏋️</button>
-<button>⏱</button>
-<button>📸</button>
+<!-- MODAL -->
+<div id="modal">
+<div class="modal-box">
+<h2 id="mTitle"></h2>
+<div id="mText"></div>
+<button onclick="closeModal()">Bezárás</button>
+</div>
 </div>
 
 <script>
 
+/* SPLASH */
 setTimeout(()=>{
 document.getElementById("splash").style.display="none";
 document.getElementById("app").style.display="block";
-},2200);
+},1500);
 
-let goal=140;
+/* DATA */
+let xp=parseInt(localStorage.getItem("xp"))||0;
 let protein=parseInt(localStorage.getItem("protein"))||0;
+let creatine=parseInt(localStorage.getItem("creatine"))||0;
 let streak=parseInt(localStorage.getItem("streak"))||0;
-let finished=false;
+let finished=JSON.parse(localStorage.getItem("finished")||"{}");
 
+const XP_TARGET=1000;
+
+/* WEEK */
 const plan=[
-{name:"Hétfő",ex:["Mell","Váll","Tricepsz"]},
-{name:"Kedd",ex:["Hát","Bicepsz"]},
-{name:"Csütörtök",ex:["Láb"]},
-{name:"Péntek",ex:["Full Upper"]}
+{
+name:"Hétfő – Push",
+xp:250,
+detail:`Mellnyomó 4×8–12<br>Ferde 3×8–12<br>Pec Deck 3×12–15<br>Vállnyomó 3×8–12<br>Tricepsz`
+},
+{
+name:"Kedd – Pull",
+xp:250,
+detail:`Lehúzás 4×8–12<br>Evező 4×8–12<br>Bicepsz`
+},
+{
+name:"Csütörtök – Láb",
+xp:250,
+detail:`Lábtoló 4×10–15<br>Hack squat 3×8–12<br>Combhajlító`
+},
+{
+name:"Péntek – Full",
+xp:250,
+detail:`Mell, hát, váll, kar`
+}
 ];
 
-let day=new Date().getDay();
-if(day==3) day=2;
-if(day>3) day=3;
+render();
+renderCalendar();
+checkWin();
 
-loadWorkout();
-update();
+/* RENDER */
+function render(){
 
-/* UPDATE */
-function update(){
-document.getElementById("proteinText").innerText=protein+" / 140g";
-document.getElementById("pbar").style.width=Math.min((protein/goal)*100,100)+"%";
+document.getElementById("xp").innerText=xp;
 document.getElementById("streak").innerText=streak;
 
-renderRuns();
+document.getElementById("proteinText").innerText=protein+"/140g";
+document.getElementById("creatineText").innerText=creatine+"/5g";
+
+let out="";
+
+plan.forEach((p,i)=>{
+let done=finished[i];
+
+out+=`
+<div class="workout">
+<h3>${p.name}</h3>
+
+<button onclick="openModal(${i})">Feladat megnyitása</button>
+
+<button onclick="finish(${i})" ${done?'disabled':''}>
+Nap lezárása (+${p.xp} XP)
+</button>
+</div>
+`;
+});
+
+document.getElementById("workouts").innerHTML=out;
+}
+
+/* FINISH */
+function finish(i){
+
+if(!finished[i]){
+finished[i]=true;
+xp+=plan[i].xp;
+streak++;
+
+localStorage.setItem("finished",JSON.stringify(finished));
+localStorage.setItem("xp",xp);
+localStorage.setItem("streak",streak);
+}
+
+render();
+renderCalendar();
+checkWin();
+}
+
+/* WIN */
+function checkWin(){
+
+let all=Object.keys(finished).length===plan.length;
+
+if(all && xp>=XP_TARGET){
+document.getElementById("win").style.display="flex";
+
+setTimeout(()=>{
+document.getElementById("win").style.display="none";
+},5000);
+}
 }
 
 /* PROTEIN */
@@ -252,105 +378,79 @@ let v=parseInt(document.getElementById("proteinInput").value);
 if(!v)return;
 protein+=v;
 localStorage.setItem("protein",protein);
-update();
+render();
 }
 
-/* WORKOUT */
-function loadWorkout(){
-let p=plan[day];
-document.getElementById("wtitle").innerText=p.name;
-
-let saved=JSON.parse(localStorage.getItem("w_"+day)||"[]");
-
-document.getElementById("workout").innerHTML=
-p.ex.map((e,i)=>`
-<label class="${finished?'done':''}">
-<input type="checkbox" ${saved[i]?"checked":""} ${finished?"disabled":""}
-onchange="saveWorkout();updateBar();">
-${e}
-</label>
-`).join("");
-
-updateBar();
+function resetProtein(){
+protein=0;
+localStorage.setItem("protein",0);
+render();
 }
 
-function saveWorkout(){
-let boxes=document.querySelectorAll("#workout input");
-let arr=[];
-boxes.forEach(b=>arr.push(b.checked));
-localStorage.setItem("w_"+day,JSON.stringify(arr));
+/* CREATINE */
+function addCreatine(){
+if(creatine<5){
+creatine++;
+localStorage.setItem("creatine",creatine);
+render();
+}
 }
 
-function updateBar(){
-let boxes=document.querySelectorAll("#workout input");
-let done=0;
-boxes.forEach(b=>{if(b.checked)done++;});
-document.getElementById("wbar").style.width=(done/boxes.length)*100+"%";
+function resetCreatine(){
+creatine=0;
+localStorage.setItem("creatine",0);
+render();
 }
 
-/* FINISH DAY */
-function finishDay(){
-finished=true;
-if(doneAll()){
-streak++;
-}
-localStorage.setItem("streak",streak);
-update();
-loadWorkout();
+/* CALENDAR */
+function renderCalendar(){
+let cal=document.getElementById("calendar");
+let t=new Date();
+let y=t.getFullYear();
+let m=t.getMonth();
+
+let first=new Date(y,m,1).getDay();
+let days=new Date(y,m+1,0).getDate();
+
+let html='<div class="calendar">';
+
+for(let i=0;i<first;i++) html+="<div></div>";
+
+for(let d=1;d<=days;d++){
+let key=y+"-"+m+"-"+d;
+let done=finished[d%plan.length===0?3:d%plan.length];
+
+html+=`
+<div class="daybox ${done?'done':''}">
+${d}
+</div>
+`;
 }
 
-function doneAll(){
-let boxes=document.querySelectorAll("#workout input");
-return [...boxes].every(b=>b.checked);
+html+='</div>';
+cal.innerHTML=html;
+}
+
+/* MODAL */
+function openModal(i){
+document.getElementById("mTitle").innerText=plan[i].name;
+document.getElementById("mText").innerHTML=plan[i].detail;
+document.getElementById("modal").style.display="block";
+}
+
+function closeModal(){
+document.getElementById("modal").style.display="none";
+}
+
+/* WEEK MODAL */
+function openWeek(){
+alert("Teljes heti edzésterv megnyitva ✔");
 }
 
 /* RESET */
 function resetAll(){
 localStorage.clear();
 location.reload();
-}
-
-/* RUN */
-function addRun(){
-let t=document.getElementById("runTime").value;
-let k=document.getElementById("runKm").value;
-let c=document.getElementById("runCal").value;
-
-let data=JSON.parse(localStorage.getItem("runs")||"[]");
-data.push({t,k,c});
-localStorage.setItem("runs",JSON.stringify(data));
-
-update();
-}
-
-function renderRuns(){
-let data=JSON.parse(localStorage.getItem("runs")||"[]");
-document.getElementById("runList").innerHTML=
-data.map(r=>`🏃 ${r.t} perc - ${r.k} km - ${r.c} kcal`).join("<br>");
-}
-
-/* IMAGE */
-function loadImage(e){
-let file=e.target.files[0];
-let reader=new FileReader();
-
-reader.onload=function(){
-let img=document.getElementById("preview");
-img.src=reader.result;
-img.style.display="block";
-
-localStorage.setItem("img",reader.result);
-}
-
-reader.readAsDataURL(file);
-}
-
-/* LOAD IMAGE */
-let savedImg=localStorage.getItem("img");
-if(savedImg){
-let img=document.getElementById("preview");
-img.src=savedImg;
-img.style.display="block";
 }
 
 </script>
